@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BLETest</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="btn_start_advertise">Start advertise</string>
+    <string name="btn_stop_advertise">Stop advertise</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_ble_scan_start">SCAN</string>
+    <string name="btn_ble_scan_stop">STOP</string>
+
+</resources>
