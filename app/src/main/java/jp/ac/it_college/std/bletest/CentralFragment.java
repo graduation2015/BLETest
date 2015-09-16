@@ -2,17 +2,14 @@ package jp.ac.it_college.std.bletest;
 
 
 import android.app.ListFragment;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +27,12 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
         contentView = inflater.inflate(R.layout.fragment_central, container, false);
         contentView.findViewById(R.id.btn_ble_scan_start).setOnClickListener(this);
         contentView.findViewById(R.id.btn_ble_scan_stop).setOnClickListener(this);
+
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.container_detail, new BLEDeviceDetailFragment())
+                    .commit();
+        }
 
         setListAdapter(new BLEDeviceListAdapter(getActivity(), R.layout.row_devices, deviceList));
         bleScanner = new BLEScanner(getActivity(), this);
@@ -87,5 +90,14 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
                 stopScan();
                 break;
         }
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        BluetoothDevice device = (BluetoothDevice) getListAdapter().getItem(position);
+
+        ((BLEDeviceDetailFragment) getFragmentManager()
+                .findFragmentById(R.id.container_detail)).showFragments(device);
     }
 }

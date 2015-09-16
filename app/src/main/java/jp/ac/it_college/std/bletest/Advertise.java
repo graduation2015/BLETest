@@ -21,8 +21,8 @@ import android.bluetooth.BluetoothGattService;
 public class Advertise extends AdvertiseCallback {
 
     //UUID
-    private static final String SERVICE_UUID_YOU_CAN_CHANGE = "0000180a-0000-1000-8000-00805f9b34fb";
-    private static final String CHAR_UUID_YOU_CAN_CHANGE = "00002a29-0000-1000-8000-00805f9b34fb";
+    public static final String SERVICE_UUID_YOU_CAN_CHANGE = "0000180a-0000-1000-8000-00805f9b34fb";
+    public static final String CHAR_UUID_YOU_CAN_CHANGE = "00002a29-0000-1000-8000-00805f9b34fb";
 
     //アドバタイズの設定
     private static final boolean CONNECTABLE = true;
@@ -97,6 +97,7 @@ public class Advertise extends AdvertiseCallback {
 
         //characteristicUUIDをserviceUUIDにのせる
         service.addCharacteristic(characteristic);
+
 
         //serviceUUIDをサーバーにのせる
         gattServer.addService(service);

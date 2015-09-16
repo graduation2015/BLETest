@@ -9,4 +9,8 @@
     <string name="btn_ble_scan_start">Start scan</string>
     <string name="btn_ble_scan_stop">Stop scan</string>
 
+    <string name="btn_connect">Connect</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="btn_detail">Detail</string>
+
 </resources>
