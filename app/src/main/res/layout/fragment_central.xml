@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:text="@string/btn_ble_scan_stop"
+            android:enabled="false"
             />
 
     </LinearLayout>

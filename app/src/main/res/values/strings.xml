@@ -6,9 +6,7 @@
     <string name="btn_start_advertise">Start advertise</string>
     <string name="btn_stop_advertise">Stop advertise</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="btn_ble_scan_start">SCAN</string>
-    <string name="btn_ble_scan_stop">STOP</string>
+    <string name="btn_ble_scan_start">Start scan</string>
+    <string name="btn_ble_scan_stop">Stop scan</string>
 
 </resources>

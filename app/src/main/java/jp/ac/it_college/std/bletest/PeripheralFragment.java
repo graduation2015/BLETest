@@ -11,30 +11,48 @@ import android.widget.Toast;
 public class PeripheralFragment extends Fragment implements View.OnClickListener{
 
     private Advertise advertise;
+    private View contentView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_peripheral, container, false);
+        contentView = inflater.inflate(R.layout.fragment_peripheral, container, false);
 
         advertise = new Advertise();
-        view.findViewById(R.id.btn_start_advertise).setOnClickListener(this);
-        view.findViewById(R.id.btn_stop_advertise).setOnClickListener(this);
-        return view;
+        contentView.findViewById(R.id.btn_start_advertise).setOnClickListener(this);
+        contentView.findViewById(R.id.btn_stop_advertise).setOnClickListener(this);
+        return contentView;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopAdvertise();
+    }
+
+    private void startAdvertise() {
+        advertise.startAdvertise(getActivity());
+        contentView.findViewById(R.id.btn_start_advertise).setEnabled(false);
+        contentView.findViewById(R.id.btn_stop_advertise).setEnabled(true);
+        Toast.makeText(getActivity(), "Start advertise", Toast.LENGTH_SHORT).show();
+    }
+
+    private void stopAdvertise() {
+        advertise.stopAdvertise();
+        contentView.findViewById(R.id.btn_start_advertise).setEnabled(true);
+        contentView.findViewById(R.id.btn_stop_advertise).setEnabled(false);
+        Toast.makeText(getActivity(), "Stop advertise", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_start_advertise:
-                advertise.startAdvertise(getActivity());
-                Toast.makeText(getActivity(), "Start advertise", Toast.LENGTH_SHORT).show();
+                startAdvertise();
                 break;
             case R.id.btn_stop_advertise:
-                advertise.stopAdvertise();
-                Toast.makeText(getActivity(), "Stop advertise", Toast.LENGTH_SHORT).show();
+                stopAdvertise();
                 break;
         }
     }

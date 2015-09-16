@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/btn_start_advertise"
         android:text="@string/btn_stop_advertise"
+        android:enabled="false"
         />
 
 

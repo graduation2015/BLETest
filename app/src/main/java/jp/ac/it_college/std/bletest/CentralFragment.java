@@ -21,18 +21,19 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
 
     private BLEScanner bleScanner;
     private List<BluetoothDevice> deviceList = new ArrayList<>();
+    private View contentView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_central, container, false);
-        view.findViewById(R.id.btn_ble_scan_start).setOnClickListener(this);
-        view.findViewById(R.id.btn_ble_scan_stop).setOnClickListener(this);
+        contentView = inflater.inflate(R.layout.fragment_central, container, false);
+        contentView.findViewById(R.id.btn_ble_scan_start).setOnClickListener(this);
+        contentView.findViewById(R.id.btn_ble_scan_stop).setOnClickListener(this);
 
         setListAdapter(new BLEDeviceListAdapter(getActivity(), R.layout.row_devices, deviceList));
         bleScanner = new BLEScanner(getActivity(), this);
-        return view;
+        return contentView;
     }
 
     // スキャンしたデバイスのリスト保存
@@ -50,6 +51,7 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
         super.onPause();
         deviceList.clear();
         ((BLEDeviceListAdapter) getListAdapter()).notifyDataSetChanged();
+        stopScan();
     }
 
     private void startScan() {
@@ -64,10 +66,15 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
         ScanSettings settings = settingsBuilder.build();
 
         bleScanner.scan(filters, settings);
+
+        contentView.findViewById(R.id.btn_ble_scan_start).setEnabled(false);
+        contentView.findViewById(R.id.btn_ble_scan_stop).setEnabled(true);
     }
 
     private void stopScan() {
         bleScanner.stopScan();
+        contentView.findViewById(R.id.btn_ble_scan_start).setEnabled(true);
+        contentView.findViewById(R.id.btn_ble_scan_stop).setEnabled(false);
     }
 
     @Override
