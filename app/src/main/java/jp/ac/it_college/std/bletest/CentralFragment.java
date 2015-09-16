@@ -98,6 +98,6 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
         BluetoothDevice device = (BluetoothDevice) getListAdapter().getItem(position);
 
         ((BLEDeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.container_detail)).showFragments(device);
+                .findFragmentById(R.id.container_detail)).showDetails(device);
     }
 }

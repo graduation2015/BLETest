@@ -46,7 +46,7 @@ public class Advertise extends AdvertiseCallback {
         setUuid();
 
         //アドバタイズを開始
-        advertiser.startAdvertising(makeAdvertiseSetting(),makeAdvertiseData(),this);
+        advertiser.startAdvertising(makeAdvertiseSetting(), makeAdvertiseData(), this);
     }
 
     //アドバタイズを停止

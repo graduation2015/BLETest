@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 public class PeripheralFragment extends Fragment implements View.OnClickListener{
 
@@ -35,14 +34,12 @@ public class PeripheralFragment extends Fragment implements View.OnClickListener
         advertise.startAdvertise(getActivity());
         contentView.findViewById(R.id.btn_start_advertise).setEnabled(false);
         contentView.findViewById(R.id.btn_stop_advertise).setEnabled(true);
-        Toast.makeText(getActivity(), "Start advertise", Toast.LENGTH_SHORT).show();
     }
 
     private void stopAdvertise() {
         advertise.stopAdvertise();
         contentView.findViewById(R.id.btn_start_advertise).setEnabled(true);
         contentView.findViewById(R.id.btn_stop_advertise).setEnabled(false);
-        Toast.makeText(getActivity(), "Stop advertise", Toast.LENGTH_SHORT).show();
     }
 
     @Override

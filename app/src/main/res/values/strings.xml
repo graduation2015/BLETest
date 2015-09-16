@@ -11,6 +11,6 @@
 
     <string name="btn_connect">Connect</string>
     <string name="btn_disconnect">Disconnect</string>
-    <string name="btn_detail">Detail</string>
+    <string name="btn_detail">Read</string>
 
 </resources>

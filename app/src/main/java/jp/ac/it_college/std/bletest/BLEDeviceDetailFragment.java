@@ -4,8 +4,6 @@ package jp.ac.it_college.std.bletest;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
@@ -17,9 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class BLEDeviceDetailFragment extends Fragment
         implements View.OnClickListener {
@@ -56,12 +52,18 @@ public class BLEDeviceDetailFragment extends Fragment
     public void connect(Context context, BluetoothDevice device) {
         bluetoothGatt = device.connectGatt(context, false, mGattCallback);
         bluetoothGatt.connect();
-        contentView.findViewById(R.id.btn_detail).setEnabled(true);
+        contentView.findViewById(R.id.btn_read).setEnabled(true);
     }
 
     public void disconnect() {
-        bluetoothGatt.disconnect();
-        contentView.findViewById(R.id.btn_detail).setEnabled(false);
+        if (bluetoothGatt != null) {
+            bluetoothGatt.disconnect();
+            contentView.findViewById(R.id.btn_read).setEnabled(false);
+        }
+    }
+
+    private void read() {
+
     }
 
     // サービス取得要求
@@ -78,23 +80,35 @@ public class BLEDeviceDetailFragment extends Fragment
         contentView = inflater.inflate(R.layout.fragment_ble_device_detail, container, false);
         contentView.findViewById(R.id.btn_connect).setOnClickListener(this);
         contentView.findViewById(R.id.btn_disconnect).setOnClickListener(this);
-        contentView.findViewById(R.id.btn_detail).setOnClickListener(this);
+        contentView.findViewById(R.id.btn_read).setOnClickListener(this);
         return contentView;
     }
 
-    public void showFragments(BluetoothDevice device) {
+    public void showDetails(BluetoothDevice device) {
         contentView.setVisibility(View.VISIBLE);
         this.device = device;
-        showDetails(device);
+        ((TextView) contentView.findViewById(R.id.lbl_device_name))
+                .setText("Device name: " + device.getName());
+        ((TextView) contentView.findViewById(R.id.lbl_device_address))
+                .setText("Device address: " + device.getAddress());
+        ((TextView) contentView.findViewById(R.id.lbl_device_type))
+                .setText("Device type: " + getDeviceType(device.getType()));
     }
 
-    public void showDetails(BluetoothDevice device) {
-        ((TextView) contentView.findViewById(R.id.lbl_device_name))
-                .setText(device.getName());
-        ((TextView) contentView.findViewById(R.id.lbl_device_address))
-                .setText(device.getAddress());
-        ((TextView) contentView.findViewById(R.id.lbl_device_info))
-                .setText(device.toString());
+    private String getDeviceType(int type) {
+        switch (type) {
+            case BluetoothDevice.DEVICE_TYPE_CLASSIC:
+                return "DEVICE_TYPE_CLASSIC";
+            case BluetoothDevice.DEVICE_TYPE_LE:
+                return "DEVICE_TYPE_LE";
+            case BluetoothDevice.DEVICE_TYPE_DUAL:
+                return "DEVICE_TYPE_DUAL";
+            case BluetoothDevice.DEVICE_TYPE_UNKNOWN:
+                return "DEVICE_TYPE_UNKNOWN";
+            default:
+                return null;
+        }
+
     }
 
     private void resetViews() {
@@ -117,8 +131,7 @@ public class BLEDeviceDetailFragment extends Fragment
             case R.id.btn_disconnect:
                 disconnect();
                 break;
-            case R.id.btn_detail:
-                showDetails(bluetoothGatt.getDevice());
+            case R.id.btn_read:
                 break;
         }
     }
