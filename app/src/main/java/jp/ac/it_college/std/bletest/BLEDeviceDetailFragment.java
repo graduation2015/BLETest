@@ -4,7 +4,7 @@ package jp.ac.it_college.std.bletest;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,15 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 public class BLEDeviceDetailFragment extends Fragment
         implements View.OnClickListener {
 
     private BluetoothDevice device;
     private BluetoothGatt bluetoothGatt;
-    private List<BluetoothGattService> serviceList = new ArrayList<>();
     private View contentView;
 
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -36,8 +34,7 @@ public class BLEDeviceDetailFragment extends Fragment
                     discoverService();
                     break;
                 case BluetoothProfile.STATE_DISCONNECTED:
-                    bluetoothGatt.close();
-                    bluetoothGatt = null;
+                    disconnect();
                     break;
             }
         }
@@ -45,25 +42,40 @@ public class BLEDeviceDetailFragment extends Fragment
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                BluetoothGattCharacteristic characteristic = gatt
+                        .getService(UUID.fromString(Advertise.SERVICE_UUID_YOU_CAN_CHANGE))
+                        .getCharacteristic(UUID.fromString(Advertise.CHAR_UUID_YOU_CAN_CHANGE));
+                gatt.readCharacteristic(characteristic);
+            }
         }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicRead(gatt, characteristic, status);
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                String msg = characteristic.getStringValue(0);
+                ((TextView) contentView.findViewById(R.id.lbl_message))
+                        .setText("Message: " + msg);
+            }
+        }
+
     };
 
     // Gattへの接続要求
     public void connect(Context context, BluetoothDevice device) {
         bluetoothGatt = device.connectGatt(context, false, mGattCallback);
         bluetoothGatt.connect();
-        contentView.findViewById(R.id.btn_read).setEnabled(true);
+
+//        contentView.findViewById(R.id.btn_read).setEnabled(true);
     }
 
     public void disconnect() {
         if (bluetoothGatt != null) {
-            bluetoothGatt.disconnect();
-            contentView.findViewById(R.id.btn_read).setEnabled(false);
+            bluetoothGatt.close();
+            bluetoothGatt = null;
+//            contentView.findViewById(R.id.btn_read).setEnabled(false);
         }
-    }
-
-    private void read() {
-
     }
 
     // サービス取得要求
@@ -93,6 +105,8 @@ public class BLEDeviceDetailFragment extends Fragment
                 .setText("Device address: " + device.getAddress());
         ((TextView) contentView.findViewById(R.id.lbl_device_type))
                 .setText("Device type: " + getDeviceType(device.getType()));
+        ((TextView) contentView.findViewById(R.id.lbl_message))
+                .setText("Message: ");
     }
 
     private String getDeviceType(int type) {

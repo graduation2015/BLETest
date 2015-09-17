@@ -1,6 +1,8 @@
 package jp.ac.it_college.std.bletest;
 
 import android.annotation.TargetApi;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattServerCallback;
 import android.os.Build;
 import android.os.ParcelUuid;
 
@@ -30,7 +32,31 @@ public class Advertise extends AdvertiseCallback {
 
     //BLE
     private BluetoothLeAdvertiser advertiser;
-    private BluetoothGattServer gattServer;
+    private BluetoothGattServer bluetoothGattServer;
+
+    private BluetoothGattServerCallback mCallback = new BluetoothGattServerCallback() {
+        //セントラル（クライアント）からReadRequestが来ると呼ばれる
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+        public void onCharacteristicReadRequest(android.bluetooth.BluetoothDevice device, int requestId,
+                                                int offset, BluetoothGattCharacteristic characteristic) {
+
+            //セントラルに任意の文字を返信する
+            characteristic.setValue("hoge");
+            bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
+                    characteristic.getValue());
+
+        }
+
+        //セントラル（クライアント）からWriteRequestが来ると呼ばれる
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+        public void onCharacteristicWriteRequest(android.bluetooth.BluetoothDevice device, int requestId,
+                                                 BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded,
+                                                 int offset, byte[] value) {
+
+            //セントラルにnullを返信する
+            bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, null);
+        }
+    };
 
     //アドバタイズを開始
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -40,7 +66,7 @@ public class Advertise extends AdvertiseCallback {
         BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter adapter = manager.getAdapter();
         advertiser = getAdvertiser(adapter);
-        gattServer = getGattServer(context, manager);
+        bluetoothGattServer = getGattServer(context, manager);
 
         //UUIDを設定
         setUuid();
@@ -54,10 +80,10 @@ public class Advertise extends AdvertiseCallback {
     public void stopAdvertise() {
 
         //サーバーを閉じる
-        if (gattServer != null) {
-            gattServer.clearServices();
-            gattServer.close();
-            gattServer = null;
+        if (bluetoothGattServer != null) {
+            bluetoothGattServer.clearServices();
+            bluetoothGattServer.close();
+            bluetoothGattServer = null;
         }
 
         //アドバタイズを停止
@@ -76,7 +102,7 @@ public class Advertise extends AdvertiseCallback {
     //GattServerを取得
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public BluetoothGattServer getGattServer(Context context, BluetoothManager manager) {
-        return manager.openGattServer(context, new BLEServer(gattServer));
+        return manager.openGattServer(context, mCallback);
     }
 
     //UUIDを設定
@@ -100,7 +126,7 @@ public class Advertise extends AdvertiseCallback {
 
 
         //serviceUUIDをサーバーにのせる
-        gattServer.addService(service);
+        bluetoothGattServer.addService(service);
     }
 
     //アドバタイズを設定

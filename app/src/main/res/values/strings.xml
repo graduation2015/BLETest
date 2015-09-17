@@ -12,5 +12,6 @@
     <string name="btn_connect">Connect</string>
     <string name="btn_disconnect">Disconnect</string>
     <string name="btn_detail">Read</string>
+    <string name="lbl_message">Message:</string>
 
 </resources>
