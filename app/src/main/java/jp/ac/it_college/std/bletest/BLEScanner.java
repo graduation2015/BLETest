@@ -34,7 +34,7 @@ public class BLEScanner extends ScanCallback {
     }
 
     // スキャン実施
-    public void scan(List<ScanFilter> filters, ScanSettings settings) {
+    public void startScan(List<ScanFilter> filters, ScanSettings settings) {
         // スキャンフィルタを設定するならこちら
         mBluetoothLeScanner.startScan(filters, settings, this);
         isScanning = true;

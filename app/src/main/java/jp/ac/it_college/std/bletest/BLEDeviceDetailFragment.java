@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ public class BLEDeviceDetailFragment extends Fragment
     private BluetoothDevice device;
     private BluetoothGatt bluetoothGatt;
     private View contentView;
+    private int mStatus;
 
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
@@ -42,12 +44,8 @@ public class BLEDeviceDetailFragment extends Fragment
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                BluetoothGattCharacteristic characteristic = gatt
-                        .getService(UUID.fromString(Advertise.SERVICE_UUID_YOU_CAN_CHANGE))
-                        .getCharacteristic(UUID.fromString(Advertise.CHAR_UUID_YOU_CAN_CHANGE));
-                gatt.readCharacteristic(characteristic);
-            }
+            bluetoothGatt = gatt;
+            mStatus = status;
         }
 
         @Override
@@ -67,15 +65,27 @@ public class BLEDeviceDetailFragment extends Fragment
         bluetoothGatt = device.connectGatt(context, false, mGattCallback);
         bluetoothGatt.connect();
 
-//        contentView.findViewById(R.id.btn_read).setEnabled(true);
+        contentView.findViewById(R.id.btn_read).setEnabled(true);
     }
 
     public void disconnect() {
         if (bluetoothGatt != null) {
             bluetoothGatt.close();
             bluetoothGatt = null;
-//            contentView.findViewById(R.id.btn_read).setEnabled(false);
         }
+        contentView.findViewById(R.id.btn_read).setEnabled(false);
+    }
+
+    private void readCharacteristic() {
+        if (mStatus == BluetoothGatt.GATT_SUCCESS && bluetoothGatt != null) {
+            BluetoothGattCharacteristic characteristic = bluetoothGatt
+                    .getService(UUID.fromString(Advertise.SERVICE_UUID_YOU_CAN_CHANGE))
+                    .getCharacteristic(UUID.fromString(Advertise.CHAR_UUID_YOU_CAN_CHANGE));
+            bluetoothGatt.readCharacteristic(characteristic);
+        } else {
+            Toast.makeText(getActivity(), "Read failure", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     // サービス取得要求
@@ -146,6 +156,7 @@ public class BLEDeviceDetailFragment extends Fragment
                 disconnect();
                 break;
             case R.id.btn_read:
+                readCharacteristic();
                 break;
         }
     }

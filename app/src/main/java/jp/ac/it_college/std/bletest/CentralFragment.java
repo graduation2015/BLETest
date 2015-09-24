@@ -68,7 +68,7 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
 
         ScanSettings settings = settingsBuilder.build();
 
-        bleScanner.scan(filters, settings);
+        bleScanner.startScan(filters, settings);
 
         contentView.findViewById(R.id.btn_ble_scan_start).setEnabled(false);
         contentView.findViewById(R.id.btn_ble_scan_stop).setEnabled(true);
@@ -97,7 +97,10 @@ public class CentralFragment extends ListFragment implements View.OnClickListene
         super.onListItemClick(l, v, position, id);
         BluetoothDevice device = (BluetoothDevice) getListAdapter().getItem(position);
 
-        ((BLEDeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.container_detail)).showDetails(device);
+        BLEDeviceDetailFragment fragment =
+                ((BLEDeviceDetailFragment) getFragmentManager()
+                        .findFragmentById(R.id.container_detail));
+        fragment.disconnect();
+        fragment.showDetails(device);
     }
 }

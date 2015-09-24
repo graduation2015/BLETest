@@ -34,6 +34,9 @@ public class Advertise extends AdvertiseCallback {
     private BluetoothLeAdvertiser advertiser;
     private BluetoothGattServer bluetoothGattServer;
 
+    //Server Message
+    private static final String SERVER_MESSAGE = "fuga";
+
     private BluetoothGattServerCallback mCallback = new BluetoothGattServerCallback() {
         //セントラル（クライアント）からReadRequestが来ると呼ばれる
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -41,7 +44,7 @@ public class Advertise extends AdvertiseCallback {
                                                 int offset, BluetoothGattCharacteristic characteristic) {
 
             //セントラルに任意の文字を返信する
-            characteristic.setValue("hoge");
+            characteristic.setValue(SERVER_MESSAGE);
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
                     characteristic.getValue());
 
