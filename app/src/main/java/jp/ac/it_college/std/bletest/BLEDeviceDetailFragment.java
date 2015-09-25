@@ -7,11 +7,15 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +57,15 @@ public class BLEDeviceDetailFragment extends Fragment
             super.onCharacteristicRead(gatt, characteristic, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 String msg = characteristic.getStringValue(0);
-                ((TextView) contentView.findViewById(R.id.lbl_message))
-                        .setText("Message: " + msg);
+                Log.d("message count", String.valueOf(msg.length()));
+
+                ((TextView) contentView.findViewById(R.id.lbl_message)).setText(msg);
+/*
+                byte[] bytes = characteristic.getValue();
+                Bitmap bitmap = decodeBytes(bytes);
+
+                ((ImageView) contentView.findViewById(R.id.img_response)).setImageBitmap(bitmap);
+*/
             }
         }
 
@@ -159,5 +170,14 @@ public class BLEDeviceDetailFragment extends Fragment
                 readCharacteristic();
                 break;
         }
+    }
+
+    private Bitmap decodeBytes(byte[] bytes) {
+        Bitmap bitmap = null;
+
+        if (bytes != null) {
+            bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        }
+        return bitmap;
     }
 }

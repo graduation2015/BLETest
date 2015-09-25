@@ -3,9 +3,13 @@ package jp.ac.it_college.std.bletest;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattServerCallback;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.ParcelUuid;
 
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import android.content.Context;
@@ -36,12 +40,15 @@ public class Advertise extends AdvertiseCallback {
     private BluetoothGattServer bluetoothGattServer;
 
     //Server Message
-    private static final String SERVER_MESSAGE = "fuga";
+    private static final String SERVER_MESSAGE = "ABCDEFGHIJKLMNOPQRSTU";
 
     //Vibrator
     private Vibrator vibrator;
 
+    private Context context;
+
     public Advertise(Context context) {
+        this.context = context;
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
@@ -53,6 +60,13 @@ public class Advertise extends AdvertiseCallback {
 
             //セントラルに任意の文字を返信する
             characteristic.setValue(SERVER_MESSAGE);
+
+            //画像のbyte配列を送信
+/*
+            byte[] bytes = encodeBytes(context.getResources(), R.drawable.test2);
+            characteristic.setValue(bytes);
+*/
+
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
                     characteristic.getValue());
 
@@ -167,5 +181,14 @@ public class Advertise extends AdvertiseCallback {
         builder.addServiceUuid(new ParcelUuid(UUID.fromString(SERVICE_UUID_YOU_CAN_CHANGE)));
 
         return builder.build();
+    }
+
+    private byte[] encodeBytes(Resources r,int resourceId) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        Bitmap bitmap = BitmapFactory.decodeResource(r, resourceId);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+
+        return outputStream.toByteArray();
     }
 }
