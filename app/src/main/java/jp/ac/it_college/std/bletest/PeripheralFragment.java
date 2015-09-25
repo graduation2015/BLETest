@@ -18,7 +18,7 @@ public class PeripheralFragment extends Fragment implements View.OnClickListener
         // Inflate the layout for this fragment
         contentView = inflater.inflate(R.layout.fragment_peripheral, container, false);
 
-        advertise = new Advertise();
+        advertise = new Advertise(getActivity());
         contentView.findViewById(R.id.btn_start_advertise).setOnClickListener(this);
         contentView.findViewById(R.id.btn_stop_advertise).setOnClickListener(this);
         return contentView;

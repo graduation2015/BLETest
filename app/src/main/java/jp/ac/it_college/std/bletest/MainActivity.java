@@ -3,11 +3,15 @@ package jp.ac.it_college.std.bletest;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 public class MainActivity extends Activity {
+
+    private final int REQUEST_ENABLE_BT = 0x01;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,24 @@ public class MainActivity extends Activity {
                 .setText("Central")
                 .setTabListener(new TabListener<CentralFragment>(
                         this, "tag1", CentralFragment.class)));
-
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bluetoothSetUp();
+    }
+
+    private void bluetoothSetUp() {
+        BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
+
+        if (bt == null) {
+            return;
+        }
+
+        if (!bt.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
 }

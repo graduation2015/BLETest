@@ -18,6 +18,7 @@ import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.os.Vibrator;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class Advertise extends AdvertiseCallback {
@@ -37,6 +38,13 @@ public class Advertise extends AdvertiseCallback {
     //Server Message
     private static final String SERVER_MESSAGE = "fuga";
 
+    //Vibrator
+    private Vibrator vibrator;
+
+    public Advertise(Context context) {
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+    }
+
     private BluetoothGattServerCallback mCallback = new BluetoothGattServerCallback() {
         //セントラル（クライアント）からReadRequestが来ると呼ばれる
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -48,6 +56,7 @@ public class Advertise extends AdvertiseCallback {
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
                     characteristic.getValue());
 
+            vibrator.vibrate(100);
         }
 
         //セントラル（クライアント）からWriteRequestが来ると呼ばれる
