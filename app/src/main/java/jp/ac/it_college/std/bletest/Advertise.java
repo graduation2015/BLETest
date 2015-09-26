@@ -1,6 +1,7 @@
 package jp.ac.it_college.std.bletest;
 
 import android.annotation.TargetApi;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattServerCallback;
 import android.content.res.Resources;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.ParcelUuid;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import java.util.UUID;
 
 import android.content.Context;
@@ -23,6 +25,7 @@ import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.os.Vibrator;
+import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class Advertise extends AdvertiseCallback {
@@ -40,12 +43,13 @@ public class Advertise extends AdvertiseCallback {
     private BluetoothGattServer bluetoothGattServer;
 
     //Server Message
-    private static final String SERVER_MESSAGE = "ABCDEFGHIJKLMNOPQRSTU";
+    private static final String SERVER_MESSAGE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     //Vibrator
     private Vibrator vibrator;
 
     private Context context;
+    private static final String TAG = "AdvertiseClass";
 
     public Advertise(Context context) {
         this.context = context;
@@ -55,27 +59,26 @@ public class Advertise extends AdvertiseCallback {
     private BluetoothGattServerCallback mCallback = new BluetoothGattServerCallback() {
         //セントラル（クライアント）からReadRequestが来ると呼ばれる
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-        public void onCharacteristicReadRequest(android.bluetooth.BluetoothDevice device, int requestId,
+        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId,
                                                 int offset, BluetoothGattCharacteristic characteristic) {
 
             //セントラルに任意の文字を返信する
-            characteristic.setValue(SERVER_MESSAGE);
+//            characteristic.setValue(extractAry(SERVER_MESSAGE.getBytes(), offset));
 
             //画像のbyte配列を送信
-/*
             byte[] bytes = encodeBytes(context.getResources(), R.drawable.test2);
-            characteristic.setValue(bytes);
-*/
+            characteristic.setValue(extractAry(bytes, offset));
 
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
                     characteristic.getValue());
 
             vibrator.vibrate(100);
+            Log.d(TAG, String.valueOf(offset));
         }
 
         //セントラル（クライアント）からWriteRequestが来ると呼ばれる
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-        public void onCharacteristicWriteRequest(android.bluetooth.BluetoothDevice device, int requestId,
+        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
                                                  BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded,
                                                  int offset, byte[] value) {
 
@@ -190,5 +193,9 @@ public class Advertise extends AdvertiseCallback {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
 
         return outputStream.toByteArray();
+    }
+
+    private byte[] extractAry(byte[] original, int offset) {
+        return Arrays.copyOfRange(original, offset, original.length);
     }
 }
