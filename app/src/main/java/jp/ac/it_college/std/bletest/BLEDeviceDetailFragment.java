@@ -56,20 +56,10 @@ public class BLEDeviceDetailFragment extends Fragment
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-/*
-                String msg = characteristic.getStringValue(0);
-                ((TextView) contentView.findViewById(R.id.lbl_message)).setText(msg);
-*/
-                byte[] bytes = characteristic.getValue();
-
-                ((ImageView) contentView.findViewById(R.id.img_response)).setImageBitmap(decodeBytes(bytes));
+                handleCharacteristic(characteristic);
             }
         }
 
-        @Override
-        public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
-            super.onMtuChanged(gatt, mtu, status);
-        }
     };
 
     // Gattへの接続要求
@@ -181,5 +171,12 @@ public class BLEDeviceDetailFragment extends Fragment
             bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
         return bitmap;
+    }
+
+    private void handleCharacteristic(BluetoothGattCharacteristic characteristic) {
+        byte[] bytes = characteristic.getValue();
+        String msg = new String(bytes);
+        ((TextView) contentView.findViewById(R.id.lbl_message)).setText(msg);
+//        ((ImageView) contentView.findViewById(R.id.img_response)).setImageBitmap(decodeBytes(bytes));
     }
 }

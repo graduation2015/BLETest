@@ -43,7 +43,8 @@ public class Advertise extends AdvertiseCallback {
     private BluetoothGattServer bluetoothGattServer;
 
     //Server Message
-    private static final String SERVER_MESSAGE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//    private static final String SERVER_MESSAGE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String SERVER_MESSAGE = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん";
 
     //Vibrator
     private Vibrator vibrator;
@@ -61,18 +62,11 @@ public class Advertise extends AdvertiseCallback {
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId,
                                                 int offset, BluetoothGattCharacteristic characteristic) {
-
-            //セントラルに任意の文字を返信する
-//            characteristic.setValue(extractAry(SERVER_MESSAGE.getBytes(), offset));
-
-            //画像のbyte配列を送信
-            byte[] bytes = encodeBytes(context.getResources(), R.drawable.test2);
-            characteristic.setValue(extractAry(bytes, offset));
+            setCharacteristicValue(characteristic, offset);
 
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
                     characteristic.getValue());
 
-            vibrator.vibrate(100);
             Log.d(TAG, String.valueOf(offset));
         }
 
@@ -197,5 +191,17 @@ public class Advertise extends AdvertiseCallback {
 
     private byte[] extractAry(byte[] original, int offset) {
         return Arrays.copyOfRange(original, offset, original.length);
+    }
+
+    //Characteristicに値をセットする
+    private void setCharacteristicValue(BluetoothGattCharacteristic characteristic, int offset) {
+        //セントラルに任意の文字を返信する
+        characteristic.setValue(extractAry(SERVER_MESSAGE.getBytes(), offset));
+
+        //画像のbyte配列を送信
+/*
+        byte[] bytes = encodeBytes(context.getResources(), R.drawable.test2);
+        characteristic.setValue(extractAry(bytes, offset));
+*/
     }
 }
