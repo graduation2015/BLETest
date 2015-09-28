@@ -9,38 +9,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_connect"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="@string/btn_connect"
-            />
+            android:text="@string/btn_connect" />
 
         <Button
             android:id="@+id/btn_disconnect"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="@string/btn_disconnect"
-            />
+            android:text="@string/btn_disconnect" />
+
         <Button
             android:id="@+id/btn_read"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="@string/btn_detail"
             android:enabled="false"
-            />
+            android:text="@string/btn_read" />
+
+        <Button
+            android:id="@+id/btn_write"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:enabled="false"
+            android:text="@string/btn_write" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/lbl_device_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/lbl_device_address"
@@ -57,15 +62,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
-        <ScrollView
+
+        <TextView
+            android:id="@+id/lbl_message"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5">
-            <TextView
-                android:id="@+id/lbl_message"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </ScrollView>
+            android:layout_weight="0.5" />
 
         <ImageView
             android:id="@+id/img_response"

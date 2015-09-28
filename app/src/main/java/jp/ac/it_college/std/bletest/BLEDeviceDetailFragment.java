@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ public class BLEDeviceDetailFragment extends Fragment
     private BluetoothGatt bluetoothGatt;
     private View contentView;
     private int mStatus;
+    private static final String TAG = "BLEDeviceDetailFragmentClass";
 
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
@@ -53,13 +53,22 @@ public class BLEDeviceDetailFragment extends Fragment
         }
 
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                                         BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 handleCharacteristic(characteristic);
             }
         }
 
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt,
+                                          BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicWrite(gatt, characteristic, status);
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                handleCharacteristic(characteristic);
+            }
+        }
     };
 
     // Gattへの接続要求
@@ -68,6 +77,7 @@ public class BLEDeviceDetailFragment extends Fragment
         bluetoothGatt.connect();
 
         contentView.findViewById(R.id.btn_read).setEnabled(true);
+        contentView.findViewById(R.id.btn_write).setEnabled(true);
     }
 
     public void disconnect() {
@@ -76,18 +86,31 @@ public class BLEDeviceDetailFragment extends Fragment
             bluetoothGatt = null;
         }
         contentView.findViewById(R.id.btn_read).setEnabled(false);
+        contentView.findViewById(R.id.btn_write).setEnabled(false);
     }
 
     private void readCharacteristic() {
         if (mStatus == BluetoothGatt.GATT_SUCCESS && bluetoothGatt != null) {
-            BluetoothGattCharacteristic characteristic = bluetoothGatt
-                    .getService(UUID.fromString(Advertise.SERVICE_UUID_YOU_CAN_CHANGE))
-                    .getCharacteristic(UUID.fromString(Advertise.CHAR_UUID_YOU_CAN_CHANGE));
-            bluetoothGatt.readCharacteristic(characteristic);
+            bluetoothGatt.readCharacteristic(getCharacteristic());
         } else {
             Toast.makeText(getActivity(), "Read failure", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void writeCharacteristic() {
+        if (mStatus == BluetoothGatt.GATT_SUCCESS && bluetoothGatt != null) {
+            getCharacteristic().setValue(Advertise.SERVER_MESSAGE_WRITE.getBytes());
+            bluetoothGatt.writeCharacteristic(getCharacteristic());
+        } else {
+            Toast.makeText(getActivity(), "Write failure", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private BluetoothGattCharacteristic getCharacteristic() {
+        return bluetoothGatt
+                .getService(UUID.fromString(Advertise.SERVICE_UUID_YOU_CAN_CHANGE))
+                .getCharacteristic(UUID.fromString(Advertise.CHAR_UUID_YOU_CAN_CHANGE));
     }
 
     // サービス取得要求
@@ -105,6 +128,7 @@ public class BLEDeviceDetailFragment extends Fragment
         contentView.findViewById(R.id.btn_connect).setOnClickListener(this);
         contentView.findViewById(R.id.btn_disconnect).setOnClickListener(this);
         contentView.findViewById(R.id.btn_read).setOnClickListener(this);
+        contentView.findViewById(R.id.btn_write).setOnClickListener(this);
         return contentView;
     }
 
@@ -160,6 +184,9 @@ public class BLEDeviceDetailFragment extends Fragment
                 break;
             case R.id.btn_read:
                 readCharacteristic();
+                break;
+            case R.id.btn_write:
+                writeCharacteristic();
                 break;
         }
     }

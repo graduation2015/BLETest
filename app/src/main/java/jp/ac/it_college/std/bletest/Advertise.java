@@ -43,8 +43,11 @@ public class Advertise extends AdvertiseCallback {
     private BluetoothGattServer bluetoothGattServer;
 
     //Server Message
-//    private static final String SERVER_MESSAGE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String SERVER_MESSAGE = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん";
+//    private static final String SERVER_MESSAGE_READ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String SERVER_MESSAGE_READ = "あいうえおかきくけこさしすせそたちつてとなにぬねの" +
+            "はひふへほまみむめもやゆよらりるれろわをん";
+    public static final String SERVER_MESSAGE_WRITE = "Write request";
+
 
     //Vibrator
     private Vibrator vibrator;
@@ -62,7 +65,7 @@ public class Advertise extends AdvertiseCallback {
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId,
                                                 int offset, BluetoothGattCharacteristic characteristic) {
-            setCharacteristicValue(characteristic, offset);
+            setCharacteristicValue(characteristic, offset, SERVER_MESSAGE_READ.getBytes());
 
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
                     characteristic.getValue());
@@ -75,7 +78,6 @@ public class Advertise extends AdvertiseCallback {
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
                                                  BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded,
                                                  int offset, byte[] value) {
-
             //セントラルにnullを返信する
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, null);
         }
@@ -194,9 +196,10 @@ public class Advertise extends AdvertiseCallback {
     }
 
     //Characteristicに値をセットする
-    private void setCharacteristicValue(BluetoothGattCharacteristic characteristic, int offset) {
+    private void setCharacteristicValue(BluetoothGattCharacteristic characteristic,
+                                        int offset, byte[] values) {
         //セントラルに任意の文字を返信する
-        characteristic.setValue(extractAry(SERVER_MESSAGE.getBytes(), offset));
+        characteristic.setValue(extractAry(values, offset));
 
         //画像のbyte配列を送信
 /*
