@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,12 @@ public class BLEDeviceDetailFragment extends Fragment
 
     private void readCharacteristic() {
         if (mStatus == BluetoothGatt.GATT_SUCCESS && bluetoothGatt != null) {
-            bluetoothGatt.readCharacteristic(getCharacteristic());
+            try {
+                bluetoothGatt.readCharacteristic(getCharacteristic());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), "GATT is null", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(getActivity(), "Read failure", Toast.LENGTH_SHORT).show();
         }
@@ -100,8 +106,13 @@ public class BLEDeviceDetailFragment extends Fragment
 
     private void writeCharacteristic() {
         if (mStatus == BluetoothGatt.GATT_SUCCESS && bluetoothGatt != null) {
-            getCharacteristic().setValue(Advertise.SERVER_MESSAGE_WRITE.getBytes());
-            bluetoothGatt.writeCharacteristic(getCharacteristic());
+            try {
+                getCharacteristic().setValue(Advertise.SERVER_MESSAGE_WRITE.getBytes());
+                bluetoothGatt.writeCharacteristic(getCharacteristic());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), "GATT is null", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(getActivity(), "Write failure", Toast.LENGTH_SHORT).show();
         }
