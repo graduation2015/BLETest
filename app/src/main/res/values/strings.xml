@@ -14,5 +14,6 @@
     <string name="btn_read">Read</string>
     <string name="lbl_message">Message:</string>
     <string name="btn_write">WRITE</string>
+    <string name="hint_server_message">Write server message</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 public class PeripheralFragment extends Fragment implements View.OnClickListener{
 
@@ -17,8 +18,9 @@ public class PeripheralFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         contentView = inflater.inflate(R.layout.fragment_peripheral, container, false);
+        EditText inputText = (EditText) contentView.findViewById(R.id.edit_server_message);
 
-        advertise = new Advertise(getActivity());
+        advertise = new Advertise(getActivity(), inputText);
         contentView.findViewById(R.id.btn_start_advertise).setOnClickListener(this);
         contentView.findViewById(R.id.btn_stop_advertise).setOnClickListener(this);
         return contentView;

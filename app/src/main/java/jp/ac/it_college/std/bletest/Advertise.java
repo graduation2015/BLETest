@@ -26,6 +26,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.os.Vibrator;
 import android.util.Log;
+import android.widget.EditText;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class Advertise extends AdvertiseCallback {
@@ -43,20 +44,21 @@ public class Advertise extends AdvertiseCallback {
     private BluetoothGattServer bluetoothGattServer;
 
     //Server Message
-//    private static final String SERVER_MESSAGE_READ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String SERVER_MESSAGE_READ = "あいうえおかきくけこさしすせそたちつてとなにぬねの" +
-            "はひふへほまみむめもやゆよらりるれろわをん";
+    private String messageRead = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String SERVER_MESSAGE_WRITE = "Write request";
+    private static final String NO_MESSAGE = "No messages";
 
 
     //Vibrator
     private Vibrator vibrator;
 
     private Context context;
+    private EditText inputText;
     private static final String TAG = "AdvertiseClass";
 
-    public Advertise(Context context) {
+    public Advertise(Context context, EditText inputText) {
         this.context = context;
+        this.inputText = inputText;
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
@@ -65,7 +67,14 @@ public class Advertise extends AdvertiseCallback {
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId,
                                                 int offset, BluetoothGattCharacteristic characteristic) {
-            setCharacteristicValue(characteristic, offset, SERVER_MESSAGE_READ.getBytes());
+            //EditTextに入力された値を送信
+            byte[] messages = inputText.getText().toString().getBytes();
+            if (isEmpty(messages)) {
+                setCharacteristicValue(characteristic, offset, messages);
+            } else {
+                // サーバーメッセージの値がnull又は空の場合
+                setCharacteristicValue(characteristic, offset, NO_MESSAGE.getBytes());
+            }
 
             bluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
                     characteristic.getValue());
@@ -206,5 +215,9 @@ public class Advertise extends AdvertiseCallback {
         byte[] bytes = encodeBytes(context.getResources(), R.drawable.test2);
         characteristic.setValue(extractAry(bytes, offset));
 */
+    }
+
+    private boolean isEmpty(byte[] objects) {
+        return !(objects == null || objects.length == 0);
     }
 }

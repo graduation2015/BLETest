@@ -203,7 +203,7 @@ public class BLEDeviceDetailFragment extends Fragment
     private void handleCharacteristic(BluetoothGattCharacteristic characteristic) {
         byte[] bytes = characteristic.getValue();
         String msg = new String(bytes);
-        ((TextView) contentView.findViewById(R.id.lbl_message)).setText(msg);
+        ((TextView) contentView.findViewById(R.id.lbl_message)).setText("Message:\n" + msg);
 //        ((ImageView) contentView.findViewById(R.id.img_response)).setImageBitmap(decodeBytes(bytes));
     }
 }
